@@ -10,3 +10,4 @@ uploads/
 .local/
 artifacts/
 .docker-local/
+.deploy-secrets.txt
