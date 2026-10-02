@@ -2,7 +2,7 @@
 
 Relay brings a service company's clients, sales pipeline, projects, tasks, support tickets and team into one workspace, with each role seeing only what it needs.
 
-**[▶ Live demo](#live-demo)** · one click to sign in as an Admin, Manager, Sales rep or Employee, no sign-up needed.
+**[▶ Live demo](https://relay-teal-seven.vercel.app)** · one click to sign in as an Admin, Manager, Sales rep or Employee, no sign-up needed.
 
 ![Relay dashboard](docs/screenshots/dashboard.png)
 
@@ -10,7 +10,7 @@ Relay brings a service company's clients, sales pipeline, projects, tasks, suppo
 
 ## Live demo
 
-> **Live URL:** _coming soon_
+> **Live URL:** https://relay-teal-seven.vercel.app
 >
 > Runs on free plans (Vercel and Neon). After a quiet spell the first request can take a few seconds while the database wakes up.
 
