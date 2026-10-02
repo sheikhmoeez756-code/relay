@@ -1,0 +1,14 @@
+node_modules
+.next
+.env
+.env.*
+!.env.example
+.git
+.local
+.docker-local
+uploads
+coverage
+test-results
+playwright-report
+*.tsbuildinfo
+*.md

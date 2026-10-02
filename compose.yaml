@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: relay
+      POSTGRES_PASSWORD: relay_dev_password
+      POSTGRES_DB: relay
+    ports: ["127.0.0.1:5432:5432"]
+    volumes: ["relay_pg:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U relay -d relay"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  mail:
+    image: axllent/mailpit:latest
+    ports: ["127.0.0.1:1025:1025", "127.0.0.1:8025:8025"]
+  app:
+    profiles: ["app"]
+    build: .
+    ports: ["3000:3000"]
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://relay:relay_dev_password@db:5432/relay?schema=public
+      SMTP_HOST: mail
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes: ["relay_uploads:/app/uploads"]
+volumes:
+  relay_pg:
+  relay_uploads:
