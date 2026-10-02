@@ -1,0 +1,15 @@
+# Render Blueprint: free web service built from the Dockerfile.
+# The database is external (Neon free tier): paste its connection string as DATABASE_URL.
+services:
+  - type: web
+    name: relay
+    runtime: docker
+    plan: free
+    healthCheckPath: /login
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: NEXTAUTH_SECRET
+        generateValue: true
+      - key: DEMO_MODE
+        value: 'true'

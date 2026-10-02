@@ -16,7 +16,8 @@
     "db:local": "tsx scripts/local-db.ts",
     "test:integration": "cross-env RUN_DB_TESTS=1 vitest run tests/integration.test.ts",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "db:reset-demo": "tsx scripts/reset-demo.ts && tsx prisma/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

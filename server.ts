@@ -3,6 +3,9 @@ import next from 'next';
 import { Server } from 'socket.io';
 import { getToken } from 'next-auth/jwt';
 import { PrismaClient } from '@prisma/client';
+// Render provides the public URL; use it when NEXTAUTH_URL isn't set explicitly.
+if (!process.env.NEXTAUTH_URL && process.env.RENDER_EXTERNAL_URL)
+  process.env.NEXTAUTH_URL = process.env.RENDER_EXTERNAL_URL;
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
 const port = Number(process.env.PORT || 3000);

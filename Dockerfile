@@ -19,4 +19,5 @@ COPY --from=build --chown=node:node /app/prisma ./prisma
 RUN mkdir -p uploads && chown node:node uploads
 USER node
 EXPOSE 3000
-CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
+# Run node directly (no npm/tsx wrapper processes) to stay well inside small memory limits.
+CMD ["sh", "-c", "npx prisma migrate deploy && exec node --import tsx server.ts"]

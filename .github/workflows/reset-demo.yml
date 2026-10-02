@@ -1,0 +1,23 @@
+# Resets the public demo to fresh seed data every day, and can be run by hand
+# (Actions tab → "Reset demo data" → Run workflow) to seed the database the first time.
+name: Reset demo data
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DEMO_MODE: 'true'
+      NODE_ENV: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx prisma migrate deploy
+      - run: npm run db:reset-demo

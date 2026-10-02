@@ -11,6 +11,8 @@ Relay brings a service company's clients, sales pipeline, projects, tasks, suppo
 ## Live demo
 
 > **Live URL:** _coming soon_
+>
+> Hosted on a free plan: if nobody has visited for a while, the first page can take up to a minute to load while the server wakes up.
 
 On the sign-in page, choose a role under **"or explore the live demo as"**:
 
@@ -124,6 +126,16 @@ Prefer Docker? `docker compose up -d db mail` starts PostgreSQL and a local mail
 | End to end  | 8     | All roles signing in, CRUD through the UI, ticket and lead workflows, forged-request rejection, single-use password reset, mobile layout |
 
 All 24 pass.
+
+## Free deployment
+
+The live demo runs on free plans: **Render** for the app (from [`render.yaml`](render.yaml) and the Dockerfile) and **Neon** for PostgreSQL.
+
+1. Create a Neon project and copy its connection string.
+2. On Render choose **New → Blueprint**, select this repository, and paste the Neon string as `DATABASE_URL`. Render generates `NEXTAUTH_SECRET` and supplies the public URL.
+3. In GitHub, add the same string as the repository secret `DATABASE_URL`, then run **Actions → Reset demo data** once to load the demo company.
+
+That workflow ([`.github/workflows/reset-demo.yml`](.github/workflows/reset-demo.yml)) also resets the demo to fresh data every day at 03:00 UTC. It refuses to run against a database that holds any non-demo company.
 
 ## Project structure
 
