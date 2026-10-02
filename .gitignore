@@ -11,3 +11,4 @@ uploads/
 artifacts/
 .docker-local/
 .deploy-secrets.txt
+portfolio/
