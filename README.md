@@ -12,7 +12,7 @@ Relay brings a service company's clients, sales pipeline, projects, tasks, suppo
 
 > **Live URL:** _coming soon_
 >
-> Hosted on a free plan: if nobody has visited for a while, the first page can take up to a minute to load while the server wakes up.
+> Runs on free plans (Vercel and Neon). After a quiet spell the first request can take a few seconds while the database wakes up.
 
 On the sign-in page, choose a role under **"or explore the live demo as"**:
 
@@ -39,7 +39,7 @@ All data is fictional and shared between visitors. Account settings are read-onl
 
 - Six roles (Super Admin, Admin, Manager, Team Lead, Sales, Employee), with access enforced on the server for every request
 - Invite-only registration, team and department management
-- Direct messages and real-time notifications over WebSockets
+- Direct messages and real-time notifications over WebSockets (on serverless hosting such as Vercel, the client polls every 15 seconds instead)
 - Audit log of sign-ins and every change
 
 **Product polish**
@@ -129,13 +129,15 @@ All 24 pass.
 
 ## Free deployment
 
-The live demo runs on free plans: **Render** for the app (from [`render.yaml`](render.yaml) and the Dockerfile) and **Neon** for PostgreSQL.
+The live demo runs on free plans with no credit card: **Vercel** (Hobby) for the app and **Neon** for PostgreSQL.
 
-1. Create a Neon project and copy its connection string.
-2. On Render choose **New → Blueprint**, select this repository, and paste the Neon string as `DATABASE_URL`. Render generates `NEXTAUTH_SECRET` and supplies the public URL.
-3. In GitHub, add the same string as the repository secret `DATABASE_URL`, then run **Actions → Reset demo data** once to load the demo company.
+1. Create a Neon project and copy its **direct** connection string (connection pooling off).
+2. On Vercel, import this repository and add the environment variables `DATABASE_URL` (the Neon string), `NEXTAUTH_SECRET` (a long random string) and `DEMO_MODE=true`, then deploy. The app detects its own public URL.
+3. In GitHub, add the same Neon string as the repository secret `DATABASE_URL` and run **Actions → Reset demo data** once. That creates the tables and loads the demo company.
 
-That workflow ([`.github/workflows/reset-demo.yml`](.github/workflows/reset-demo.yml)) also resets the demo to fresh data every day at 03:00 UTC. It refuses to run against a database that holds any non-demo company.
+The workflow ([`.github/workflows/reset-demo.yml`](.github/workflows/reset-demo.yml)) also resets the demo to fresh data every day at 03:00 UTC. It refuses to run against a database that holds any non-demo company.
+
+On Vercel, live updates use polling, and file uploads are disabled in demo mode because serverless functions have no persistent disk. To keep WebSockets and uploads, run the Docker image on any container host instead ([`render.yaml`](render.yaml) is included for Render).
 
 ## Project structure
 

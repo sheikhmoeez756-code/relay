@@ -17,6 +17,8 @@ const csp = [
 
 const config: NextConfig = {
   poweredByHeader: false,
+  // Vercel runs serverless functions without the custom Socket.IO server; the client polls instead.
+  env: { NEXT_PUBLIC_REALTIME: process.env.VERCEL ? 'false' : 'true' },
   async headers() {
     return [
       {

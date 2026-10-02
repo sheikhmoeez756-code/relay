@@ -1,3 +1,4 @@
+import './env';
 import { createHash, randomBytes } from 'node:crypto';
 import nodemailer from 'nodemailer';
 import { db } from './db';

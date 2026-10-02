@@ -17,7 +17,8 @@
     "test:integration": "cross-env RUN_DB_TESTS=1 vitest run tests/integration.test.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "db:reset-demo": "tsx scripts/reset-demo.ts && tsx prisma/seed.ts"
+    "db:reset-demo": "tsx scripts/reset-demo.ts && tsx prisma/seed.ts",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

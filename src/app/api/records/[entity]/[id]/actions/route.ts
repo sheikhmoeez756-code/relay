@@ -2,6 +2,7 @@ import { db } from '@/lib/db';
 import { authorize, checkOrigin, errorResponse, HttpError } from '@/lib/security';
 import { detailRecord } from '@/lib/records';
 import { isEntity, cleanText } from '@/lib/validation';
+import { demoMode } from '@/lib/demo';
 import { z } from 'zod';
 import { randomUUID } from 'node:crypto';
 import { mkdir, writeFile, unlink } from 'node:fs/promises';
@@ -36,6 +37,8 @@ export async function POST(req: Request, ctx: { params: Promise<{ entity: string
     if (req.headers.get('content-type')?.includes('multipart/form-data')) {
       if (!['projects', 'tasks', 'tickets'].includes(entity))
         throw new HttpError(422, 'Attachments are not supported here.');
+      // Public demo hosts (e.g. Vercel) have no persistent disk, and anonymous uploads invite abuse.
+      if (demoMode()) throw new HttpError(403, 'File uploads are disabled in the public demo.');
       // Requires an explicit length: Node enforces it, so chunked bodies can't bypass the limit.
       const length = Number(req.headers.get('content-length'));
       if (!length) throw new HttpError(411, 'Upload size must be declared.');

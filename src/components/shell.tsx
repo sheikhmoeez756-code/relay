@@ -5,6 +5,9 @@ import { useEffect, useState, createContext, useContext } from 'react';
 import { signOut } from 'next-auth/react';
 import * as Dropdown from '@radix-ui/react-dropdown-menu';
 import { io } from 'socket.io-client';
+
+// Set at build time in next.config.ts; false where no socket server runs.
+const realtime = process.env.NEXT_PUBLIC_REALTIME !== 'false';
 import {
   LayoutDashboard,
   Users,
@@ -78,17 +81,36 @@ export function Shell({ user, children }: { user: any; children: React.ReactNode
       .catch((e) => toast(e.message));
   useEffect(() => {
     refresh();
-    request<any[]>('/api/collaboration')
-      .then((n) => setUnread(n.filter((x) => !x.readAt).length))
-      .catch(() => {});
-    setDark(document.documentElement.classList.contains('dark'));
-    const socket = io({ transports: ['websocket', 'polling'] });
-    socket.on('notification', () => {
-      request<any[]>('/api/collaboration').then((n) =>
-        setUnread(n.filter((x) => !x.readAt).length),
-      );
+    let known = -1;
+    const loadUnread = () =>
+      request<any[]>('/api/collaboration')
+        .then((n) => {
+          const count = n.filter((x) => !x.readAt).length;
+          setUnread(count);
+          return count;
+        })
+        .catch(() => known);
+    const notify = () => {
       window.dispatchEvent(new Event('relay-update'));
       toast('You have a new workspace notification.');
+    };
+    loadUnread().then((count) => (known = count));
+    setDark(document.documentElement.classList.contains('dark'));
+    if (!realtime) {
+      // Serverless hosting (e.g. Vercel) has no socket server: poll while the tab is visible.
+      const timer = setInterval(async () => {
+        if (document.hidden) return;
+        const count = await loadUnread();
+        if (known >= 0 && count > known) notify();
+        known = count;
+        window.dispatchEvent(new Event('relay-message'));
+      }, 15000);
+      return () => clearInterval(timer);
+    }
+    const socket = io({ transports: ['websocket', 'polling'] });
+    socket.on('notification', () => {
+      loadUnread().then((count) => (known = count));
+      notify();
     });
     socket.on('message', () => window.dispatchEvent(new Event('relay-message')));
     return () => {

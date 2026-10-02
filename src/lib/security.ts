@@ -1,3 +1,4 @@
+import './env';
 import { getServerSession } from 'next-auth';
 import { authOptions } from './auth';
 import { db } from './db';
